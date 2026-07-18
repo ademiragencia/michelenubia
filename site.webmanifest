@@ -1,0 +1,14 @@
+{
+  "name": "Michele Núbia — Terapeuta TRG & Psicanálise",
+  "short_name": "Michele Núbia",
+  "description": "Terapia online com TRG e Psicanálise para tratar traumas, ansiedade e padrões emocionais. Atendimento humanizado para todo o Brasil.",
+  "lang": "pt-BR",
+  "start_url": "/michelenubia/",
+  "scope": "/michelenubia/",
+  "display": "standalone",
+  "background_color": "#fcf8f5",
+  "theme_color": "#1b4b4a",
+  "icons": [
+    { "src": "assets/img/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
