@@ -85,7 +85,27 @@
   .vt-note { margin-top: 1rem; }
 }
 
+/* ---------- Painel admin ---------- */
+.admin-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.6rem; }
+.admin-stat { background: var(--white); border: 1px solid rgba(127, 148, 99, 0.18); border-radius: var(--radius); padding: 1.3rem; text-align: center; box-shadow: var(--shadow-sm); }
+.admin-stat b { display: block; font-family: var(--font-display); font-size: 2.2rem; font-weight: 600; color: var(--green-800); line-height: 1; }
+.admin-stat span { font-size: 0.82rem; color: var(--ink-soft); font-weight: 600; }
+.admin-table-wrap { background: var(--white); border: 1px solid rgba(127, 148, 99, 0.18); border-radius: var(--radius); padding: 0.5rem; box-shadow: var(--shadow-sm); overflow-x: auto; }
+.admin-table { width: 100%; border-collapse: collapse; font-size: 0.92rem; min-width: 640px; }
+.admin-table th { text-align: left; font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--sage-500); padding: 0.9rem 0.8rem; border-bottom: 1px solid rgba(127, 148, 99, 0.2); }
+.admin-table td { padding: 0.8rem; border-bottom: 1px solid rgba(127, 148, 99, 0.12); color: var(--ink-soft); vertical-align: middle; }
+.admin-table tr:last-child td { border-bottom: none; }
+.admin-table .mono { font-family: 'Courier New', monospace; font-weight: 700; color: var(--green-800); letter-spacing: 0.5px; }
+.admin-table .nowrap { white-space: nowrap; }
+.badge-ok { background: var(--sage-100); color: var(--moss-700); font-weight: 700; font-size: 0.78rem; padding: 0.25rem 0.7rem; border-radius: 30px; }
+.badge-used { background: #eadfd6; color: #9c6a3f; font-weight: 700; font-size: 0.78rem; padding: 0.25rem 0.7rem; border-radius: 30px; }
+.admin-table .acts { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+.admin-table .mini { display: inline-flex; align-items: center; gap: 5px; background: var(--oat); border: 1px solid rgba(127, 148, 99, 0.28); color: var(--green-800); font-family: var(--font-body); font-weight: 700; font-size: 0.78rem; padding: 0.4rem 0.65rem; border-radius: 8px; cursor: pointer; text-decoration: none; }
+.admin-table .mini:hover { background: var(--sage-100); }
+
 @media (max-width: 620px) {
+  .admin-stats { grid-template-columns: 1fr 1fr 1fr; gap: 0.5rem; }
+  .admin-stat b { font-size: 1.6rem; }
   .vticket { flex-direction: column; }
   .vticket-stub { width: 100%; border-left: none; border-top: 2px dashed rgba(250, 248, 240, 0.5); flex-direction: row; justify-content: space-around; padding: 1.2rem; }
   .vticket-stub::before { top: 50%; left: -10px; transform: translateY(-50%); }

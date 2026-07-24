@@ -34,17 +34,22 @@
         <div class="section-head bilhete-head" style="margin-bottom:2rem">
           <span class="eyebrow">Seu ingresso</span>
           <h2>Gere o seu bilhete</h2>
-          <p>Digite o nome de quem vai comparecer. O bilhete pode ser impresso ou salvo em PDF e apresentado na entrada do evento.</p>
+          <p>Informe o seu nome e o <strong>código de confirmação</strong> que você recebeu após o pagamento. O bilhete pode ser impresso ou salvo em PDF.</p>
         </div>
 
         <form class="gen-form" id="genForm" novalidate>
           <label for="nome">Nome completo do portador(a)</label>
-          <div class="field">
+          <div class="field" style="margin-bottom:1rem">
             <input type="text" id="nome" name="nome" placeholder="Ex.: Maria da Silva" autocomplete="name" required>
-            <button type="submit" class="btn btn-moss"><i class="fas fa-ticket"></i> Gerar bilhete</button>
           </div>
-          <p class="gen-error" id="genError">Por favor, digite o nome completo.</p>
-          <p class="gen-hint"><i class="fas fa-circle-info"></i> O bilhete é válido mediante confirmação do pagamento (PIX). Na entrada, a organização confere o nome na lista de pagantes.</p>
+          <label for="codigo">Código de confirmação</label>
+          <div class="field">
+            <input type="text" id="codigo" name="codigo" placeholder="Ex.: RENOV-7K2PX" autocomplete="off" spellcheck="false" style="text-transform:uppercase" required>
+            <button type="submit" class="btn btn-moss" id="btnGen"><i class="fas fa-ticket"></i> Gerar bilhete</button>
+          </div>
+          <p class="gen-error" id="genError">Verifique os dados e tente novamente.</p>
+          <p class="gen-hint"><i class="fas fa-circle-info"></i> Ainda não tem o código? Faça o PIX de R$ 80 e envie o comprovante no
+            <a href="https://wa.me/556493256081?text=Ol%C3%A1!%20Fiz%20o%20PIX%20do%20Renovamente%20e%20quero%20meu%20c%C3%B3digo%20de%20confirma%C3%A7%C3%A3o." target="_blank" rel="noopener" style="color:var(--moss-600);font-weight:700">WhatsApp</a> para receber o seu código.</p>
         </form>
 
         <div class="vticket-area" id="ticketArea">
@@ -83,12 +88,12 @@
             </div>
           </div>
 
-          <p class="vt-note"><i class="fas fa-circle-info"></i> Apresente este bilhete (impresso ou na tela) na entrada do evento.</p>
+          <p class="vt-note" id="vtStatus"><i class="fas fa-circle-check"></i> Bilhete confirmado. Apresente-o (impresso ou na tela) na entrada.</p>
 
           <div class="vt-actions">
             <button type="button" class="btn btn-moss" id="btnPrint"><i class="fas fa-print"></i> Imprimir / Salvar PDF</button>
             <a class="btn btn-wa" id="btnWa" href="#" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i> Enviar meu bilhete</a>
-            <button type="button" class="btn btn-outline" id="btnNew"><i class="fas fa-rotate"></i> Gerar outro</button>
+            <button type="button" class="btn btn-outline" id="btnNew"><i class="fas fa-rotate"></i> Outro bilhete</button>
           </div>
         </div>
       </div>
@@ -104,16 +109,20 @@
     </div>
   </footer>
 
+  <script src="../../assets/js/renov-config.js"></script>
   <script>
     (function () {
       var form = document.getElementById('genForm');
       var input = document.getElementById('nome');
+      var codeInput = document.getElementById('codigo');
       var error = document.getElementById('genError');
+      var btnGen = document.getElementById('btnGen');
       var area = document.getElementById('ticketArea');
       var elName = document.getElementById('vtName');
       var elCode = document.getElementById('vtCode');
       var elCodeIn = document.getElementById('vtCodeInline');
       var elIssued = document.getElementById('vtIssued');
+      var elStatus = document.getElementById('vtStatus');
       var bars = document.getElementById('vtBars');
       var btnWa = document.getElementById('btnWa');
       var yearEl = document.getElementById('year');
@@ -122,13 +131,7 @@
       function titleCase(s) {
         return s.toLowerCase().replace(/(^|\s|-|')([a-zà-ú])/g, function (m, sep, ch) { return sep + ch.toUpperCase(); });
       }
-      function ticketCode(name) {
-        var s = name.trim().toUpperCase().replace(/\s+/g, ' ');
-        var h = 2166136261;
-        for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = (h * 16777619) >>> 0; }
-        var base = ('000000' + h.toString(36).toUpperCase()).slice(-6);
-        return 'RENOV-' + base.slice(0, 3) + '-' + base.slice(3, 6);
-      }
+      function showError(msg) { error.textContent = msg; error.classList.add('show'); }
       function renderBars(code) {
         bars.innerHTML = '';
         var seed = 0; for (var i = 0; i < code.length; i++) seed += code.charCodeAt(i) * (i + 1);
@@ -140,14 +143,17 @@
           bars.appendChild(bar);
         }
       }
-      function generate(rawName) {
-        var name = titleCase(rawName.trim().replace(/\s+/g, ' '));
-        var code = ticketCode(name);
+      function renderTicket(holder, code, issuedISO, reprint) {
+        var name = titleCase(holder.trim().replace(/\s+/g, ' '));
         elName.textContent = name;
         elCode.textContent = code;
         elCodeIn.textContent = code;
-        elIssued.textContent = new Date().toLocaleDateString('pt-BR');
+        var d = issuedISO ? new Date(issuedISO) : new Date();
+        elIssued.textContent = d.toLocaleDateString('pt-BR');
         renderBars(code);
+        elStatus.innerHTML = reprint
+          ? '<i class="fas fa-rotate"></i> Reimpressão do bilhete já emitido. Apresente-o na entrada.'
+          : '<i class="fas fa-circle-check"></i> Bilhete confirmado! Apresente-o (impresso ou na tela) na entrada.';
         var msg = 'Olá! Segue meu bilhete do Renovamente (23/10/2026).%0APortador: ' +
                   encodeURIComponent(name) + '%0ACódigo: ' + code + '%0AJá realizei o pagamento via PIX.';
         btnWa.href = 'https://wa.me/556493256081?text=' + msg;
@@ -155,25 +161,68 @@
         area.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
 
+      function setLoading(on) {
+        btnGen.disabled = on;
+        btnGen.innerHTML = on ? '<i class="fas fa-spinner fa-spin"></i> Validando...' : '<i class="fas fa-ticket"></i> Gerar bilhete';
+      }
+
+      async function redeem(name, code) {
+        if (!window.RENOV || !window.RENOV.url || window.RENOV.url.indexOf('__') === 0) {
+          showError('Sistema de validação indisponível no momento. Fale com a organização pelo WhatsApp.');
+          return;
+        }
+        setLoading(true);
+        error.classList.remove('show');
+        try {
+          var resp = await fetch(window.RENOV.url + '/rest/v1/rpc/renov_redeem_code', {
+            method: 'POST',
+            headers: { 'apikey': window.RENOV.key, 'Authorization': 'Bearer ' + window.RENOV.key, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ p_code: code, p_name: name })
+          });
+          if (!resp.ok) throw new Error('http ' + resp.status);
+          var data = await resp.json();
+          if (!data || data.ok !== true) {
+            var m = 'Não foi possível validar o código.';
+            if (data && data.error === 'invalido') m = 'Código inválido ou não encontrado. Confira com a organização pelo WhatsApp.';
+            else if (data && data.error === 'nome') m = 'Digite o seu nome completo (nome e sobrenome).';
+            showError(m);
+            setLoading(false);
+            return;
+          }
+          setLoading(false);
+          area.classList.remove('show');
+          renderTicket(data.holder || name, data.code || code, data.redeemed_at, !!data.reprint);
+        } catch (e) {
+          showError('Não foi possível validar agora. Verifique a conexão e tente novamente.');
+          setLoading(false);
+        }
+      }
+
       form.addEventListener('submit', function (e) {
         e.preventDefault();
         var v = input.value.trim();
-        if (v.length < 3 || v.indexOf(' ') === -1) { error.classList.add('show'); input.focus(); return; }
-        error.classList.remove('show');
-        generate(v);
+        var c = codeInput.value.trim().toUpperCase();
+        if (v.length < 3 || v.indexOf(' ') === -1) { showError('Digite o seu nome completo (nome e sobrenome).'); input.focus(); return; }
+        if (c.length < 4) { showError('Digite o código de confirmação que você recebeu.'); codeInput.focus(); return; }
+        redeem(v, c);
       });
       input.addEventListener('input', function () { error.classList.remove('show'); });
+      codeInput.addEventListener('input', function () { error.classList.remove('show'); });
 
       document.getElementById('btnPrint').addEventListener('click', function () { window.print(); });
       document.getElementById('btnNew').addEventListener('click', function () {
-        area.classList.remove('show'); input.value = ''; input.focus();
+        area.classList.remove('show'); input.value = ''; codeInput.value = ''; input.focus();
         window.scrollTo({ top: 0, behavior: 'smooth' });
       });
 
-      /* Pré-preenchimento via ?nome=Fulano (link enviado pela organização) */
+      /* Pré-preenchimento por ?nome= e ?codigo= (link enviado pela organização) */
       var params = new URLSearchParams(window.location.search);
-      var pre = params.get('nome');
-      if (pre && pre.trim().length >= 3) { input.value = pre.trim(); generate(pre); }
+      var preNome = params.get('nome'); var preCod = params.get('codigo');
+      if (preNome) input.value = preNome.trim();
+      if (preCod) codeInput.value = preCod.trim().toUpperCase();
+      if (preNome && preCod && preNome.trim().length >= 3 && preCod.trim().length >= 4) {
+        redeem(preNome.trim(), preCod.trim().toUpperCase());
+      }
     })();
   </script>
 </body>

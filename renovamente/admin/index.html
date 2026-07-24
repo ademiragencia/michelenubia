@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel — Renovamente</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#2c3626">
+  <link rel="icon" href="../../assets/img/favicon.svg" type="image/svg+xml">
+  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="../../assets/css/styles.css">
+  <link rel="stylesheet" href="../../assets/css/bilhete.css">
+</head>
+<body>
+  <header class="site-header ev-header">
+    <div class="container nav">
+      <a href="../" class="brand"><span class="brand-mark">M</span><span>Michele Núbia<span class="dot">.</span><small>Painel Renovamente</small></span></a>
+      <a href="../" class="btn btn-outline"><i class="fas fa-arrow-left"></i> Site</a>
+    </div>
+  </header>
+
+  <main class="bilhete-page">
+    <section>
+      <div class="container" style="max-width:920px">
+
+        <!-- Login -->
+        <div id="loginBox" class="gen-wrap">
+          <div class="section-head" style="margin-bottom:1.6rem">
+            <span class="eyebrow">Acesso restrito</span>
+            <h2>Painel de ingressos</h2>
+            <p>Área da organização. Informe a senha para gerar e acompanhar os códigos.</p>
+          </div>
+          <form class="gen-form" id="loginForm" novalidate>
+            <label for="senha">Senha do painel</label>
+            <div class="field">
+              <input type="password" id="senha" placeholder="Senha" autocomplete="current-password">
+              <button type="submit" class="btn btn-moss" id="btnLogin"><i class="fas fa-unlock"></i> Entrar</button>
+            </div>
+            <p class="gen-error" id="loginError">Senha incorreta.</p>
+          </form>
+        </div>
+
+        <!-- Painel -->
+        <div id="panel" style="display:none">
+          <div class="admin-stats" id="stats"></div>
+
+          <div class="gen-form" style="margin-bottom:1.6rem">
+            <label for="qty">Gerar novos códigos</label>
+            <div class="field">
+              <input type="number" id="qty" min="1" max="200" value="10" style="max-width:120px">
+              <button type="button" class="btn btn-moss" id="btnGenCodes"><i class="fas fa-plus"></i> Gerar códigos</button>
+              <button type="button" class="btn btn-outline" id="btnReload"><i class="fas fa-rotate"></i> Atualizar</button>
+              <button type="button" class="btn btn-outline" id="btnCopyAvail"><i class="fas fa-copy"></i> Copiar disponíveis</button>
+            </div>
+            <p class="gen-hint" id="genMsg"><i class="fas fa-circle-info"></i> Cada código libera 1 bilhete. Envie um código para a pessoa após confirmar o PIX.</p>
+          </div>
+
+          <div class="admin-table-wrap">
+            <table class="admin-table" id="codesTable">
+              <thead><tr><th>Código</th><th>Status</th><th>Portador(a)</th><th>Data</th><th>Ações</th></tr></thead>
+              <tbody id="codesBody"></tbody>
+            </table>
+            <p id="emptyMsg" class="gen-hint" style="display:none">Nenhum código ainda. Gere os primeiros acima.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <script src="../../assets/js/renov-config.js"></script>
+  <script>
+    (function () {
+      var KEY = '';
+      var loginBox = document.getElementById('loginBox');
+      var panel = document.getElementById('panel');
+      var loginForm = document.getElementById('loginForm');
+      var senha = document.getElementById('senha');
+      var loginError = document.getElementById('loginError');
+      var statsEl = document.getElementById('stats');
+      var tbody = document.getElementById('codesBody');
+      var emptyMsg = document.getElementById('emptyMsg');
+      var genMsg = document.getElementById('genMsg');
+
+      function ready() { return window.RENOV && window.RENOV.url && window.RENOV.url.indexOf('__') !== 0; }
+      async function rpc(fn, body) {
+        var resp = await fetch(window.RENOV.url + '/rest/v1/rpc/' + fn, {
+          method: 'POST',
+          headers: { 'apikey': window.RENOV.key, 'Authorization': 'Bearer ' + window.RENOV.key, 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        if (!resp.ok) { var t = await resp.text(); throw new Error(resp.status + ' ' + t); }
+        return resp.json();
+      }
+      function esc(s) { return (s || '').replace(/[&<>"]/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]; }); }
+      var bilheteBase = location.href.replace(/admin\/.*$/, 'bilhete/');
+
+      function render(rows) {
+        var total = rows.length, used = rows.filter(function (r) { return r.status === 'used'; }).length;
+        statsEl.innerHTML =
+          '<div class="admin-stat"><b>' + total + '</b><span>Códigos gerados</span></div>' +
+          '<div class="admin-stat"><b>' + used + '</b><span>Bilhetes emitidos</span></div>' +
+          '<div class="admin-stat"><b>' + (total - used) + '</b><span>Disponíveis</span></div>';
+        tbody.innerHTML = '';
+        emptyMsg.style.display = rows.length ? 'none' : 'block';
+        rows.forEach(function (r) {
+          var used = r.status === 'used';
+          var tr = document.createElement('tr');
+          var date = r.redeemed_at ? new Date(r.redeemed_at).toLocaleString('pt-BR') : (r.created_at ? new Date(r.created_at).toLocaleDateString('pt-BR') : '—');
+          var actions = used ? '—' :
+            '<button class="mini" data-copy="' + r.code + '"><i class="fas fa-copy"></i> Código</button>' +
+            '<button class="mini" data-link="' + r.code + '"><i class="fas fa-link"></i> Link</button>' +
+            '<a class="mini" target="_blank" rel="noopener" href="https://wa.me/?text=' + encodeURIComponent('Seu código do Renovamente: ' + r.code + '\nGere seu bilhete: ' + bilheteBase + '?codigo=' + r.code) + '"><i class="fab fa-whatsapp"></i></a>';
+          tr.innerHTML =
+            '<td class="mono">' + esc(r.code) + '</td>' +
+            '<td>' + (used ? '<span class="badge-used">Usado</span>' : '<span class="badge-ok">Disponível</span>') + '</td>' +
+            '<td>' + (esc(r.holder_name) || '—') + '</td>' +
+            '<td class="nowrap">' + date + '</td>' +
+            '<td class="acts">' + actions + '</td>';
+          tbody.appendChild(tr);
+        });
+      }
+
+      async function load() {
+        var rows = await rpc('renov_admin_list_codes', { p_key: KEY });
+        render(rows || []);
+      }
+
+      loginForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        loginError.classList.remove('show');
+        if (!ready()) { loginError.textContent = 'Sistema indisponível. Recarregue a página.'; loginError.classList.add('show'); return; }
+        KEY = senha.value;
+        try {
+          await load();
+          loginBox.style.display = 'none';
+          panel.style.display = 'block';
+        } catch (err) {
+          loginError.textContent = 'Senha incorreta ou sem acesso.';
+          loginError.classList.add('show');
+          KEY = '';
+        }
+      });
+
+      document.getElementById('btnReload').addEventListener('click', function () { load().catch(function(){}); });
+
+      document.getElementById('btnGenCodes').addEventListener('click', async function () {
+        var q = parseInt(document.getElementById('qty').value, 10) || 1;
+        genMsg.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando...';
+        try {
+          var made = await rpc('renov_admin_create_codes', { p_key: KEY, p_qty: q });
+          genMsg.innerHTML = '<i class="fas fa-circle-check"></i> ' + (made ? made.length : 0) + ' código(s) gerado(s).';
+          await load();
+        } catch (e) { genMsg.innerHTML = '<i class="fas fa-triangle-exclamation"></i> Erro ao gerar. Tente novamente.'; }
+      });
+
+      document.getElementById('btnCopyAvail').addEventListener('click', async function () {
+        try {
+          var rows = await rpc('renov_admin_list_codes', { p_key: KEY });
+          var avail = (rows || []).filter(function (r) { return r.status !== 'used'; }).map(function (r) { return r.code; });
+          navigator.clipboard.writeText(avail.join('\n'));
+          genMsg.innerHTML = '<i class="fas fa-circle-check"></i> ' + avail.length + ' código(s) disponíveis copiados.';
+        } catch (e) {}
+      });
+
+      tbody.addEventListener('click', function (e) {
+        var b = e.target.closest('button'); if (!b) return;
+        if (b.dataset.copy) { navigator.clipboard.writeText(b.dataset.copy); b.innerHTML = '<i class="fas fa-check"></i> Copiado'; }
+        if (b.dataset.link) { navigator.clipboard.writeText(bilheteBase + '?codigo=' + b.dataset.link); b.innerHTML = '<i class="fas fa-check"></i> Link'; }
+      });
+    })();
+  </script>
+</body>
+</html>
