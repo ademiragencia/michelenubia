@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meu Bilhete — Renovamente | Imersão Terapêutica</title>
+  <meta name="description" content="Gere e imprima o seu bilhete do Renovamente – Uma Imersão Terapêutica. 23 de outubro de 2026, 19h, Jataí-GO.">
+  <meta name="robots" content="noindex, follow">
+  <meta name="theme-color" content="#2c3626">
+
+  <link rel="icon" href="../../assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="../../assets/css/styles.css">
+  <link rel="stylesheet" href="../../assets/css/bilhete.css">
+</head>
+<body>
+
+  <header class="site-header ev-header">
+    <div class="container nav">
+      <a href="../" class="brand" aria-label="Voltar para a página do evento">
+        <span class="brand-mark">M</span>
+        <span>Michele Núbia<span class="dot">.</span><small>Renovamente</small></span>
+      </a>
+      <a href="../#ingresso" class="btn btn-outline"><i class="fas fa-arrow-left"></i> Voltar</a>
+    </div>
+  </header>
+
+  <main class="bilhete-page">
+    <section>
+      <div class="container gen-wrap">
+        <div class="section-head bilhete-head" style="margin-bottom:2rem">
+          <span class="eyebrow">Seu ingresso</span>
+          <h2>Gere o seu bilhete</h2>
+          <p>Digite o nome de quem vai comparecer. O bilhete pode ser impresso ou salvo em PDF e apresentado na entrada do evento.</p>
+        </div>
+
+        <form class="gen-form" id="genForm" novalidate>
+          <label for="nome">Nome completo do portador(a)</label>
+          <div class="field">
+            <input type="text" id="nome" name="nome" placeholder="Ex.: Maria da Silva" autocomplete="name" required>
+            <button type="submit" class="btn btn-moss"><i class="fas fa-ticket"></i> Gerar bilhete</button>
+          </div>
+          <p class="gen-error" id="genError">Por favor, digite o nome completo.</p>
+          <p class="gen-hint"><i class="fas fa-circle-info"></i> O bilhete é válido mediante confirmação do pagamento (PIX). Na entrada, a organização confere o nome na lista de pagantes.</p>
+        </form>
+
+        <div class="vticket-area" id="ticketArea">
+          <div class="vticket" id="ticket">
+            <div class="vticket-main">
+              <div class="vt-brand">
+                <span class="brand-mark">M</span>
+                <div><b>Michele Núbia</b><small>Renovamente</small></div>
+              </div>
+              <div class="vt-title">Renovamente</div>
+              <div class="vt-sub">Uma Imersão Terapêutica</div>
+
+              <div class="vt-meta">
+                <div><i class="fas fa-calendar-day"></i><span><b>23 de outubro de 2026</b>sexta-feira</span></div>
+                <div><i class="fas fa-clock"></i><span><b>19h</b>Abertura da noite</span></div>
+                <div><i class="fas fa-location-dot"></i><span><b>Jataí — GO</b>Centro de Cultura Dom Benedito</span></div>
+                <div><i class="fas fa-ticket"></i><span><b>Ingresso Individual</b>R$ 80,00</span></div>
+              </div>
+
+              <div class="vt-holder">
+                <label>Portador(a)</label>
+                <strong id="vtName">—</strong>
+              </div>
+
+              <div class="vt-foot">
+                <span class="vt-code-inline">Código: <span id="vtCodeInline">—</span></span>
+                <span class="vt-issued">Emitido em <span id="vtIssued">—</span></span>
+              </div>
+            </div>
+
+            <div class="vticket-stub">
+              <span class="st-label">Entrada</span>
+              <span class="st-price">R$ 80</span>
+              <span class="st-code" id="vtCode">—</span>
+              <span class="st-bars" id="vtBars" aria-hidden="true"></span>
+            </div>
+          </div>
+
+          <p class="vt-note"><i class="fas fa-circle-info"></i> Apresente este bilhete (impresso ou na tela) na entrada do evento.</p>
+
+          <div class="vt-actions">
+            <button type="button" class="btn btn-moss" id="btnPrint"><i class="fas fa-print"></i> Imprimir / Salvar PDF</button>
+            <a class="btn btn-wa" id="btnWa" href="#" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i> Enviar meu bilhete</a>
+            <button type="button" class="btn btn-outline" id="btnNew"><i class="fas fa-rotate"></i> Gerar outro</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom" style="border:none;padding-top:0">
+        <p>Renovamente — Uma Imersão Terapêutica · 23 de outubro de 2026 · Jataí-GO</p>
+        <p style="margin-top:0.6rem">© <span id="year">2026</span> Michele Núbia · <a href="../" style="color:var(--wheat)">Página do evento</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var form = document.getElementById('genForm');
+      var input = document.getElementById('nome');
+      var error = document.getElementById('genError');
+      var area = document.getElementById('ticketArea');
+      var elName = document.getElementById('vtName');
+      var elCode = document.getElementById('vtCode');
+      var elCodeIn = document.getElementById('vtCodeInline');
+      var elIssued = document.getElementById('vtIssued');
+      var bars = document.getElementById('vtBars');
+      var btnWa = document.getElementById('btnWa');
+      var yearEl = document.getElementById('year');
+      if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+      function titleCase(s) {
+        return s.toLowerCase().replace(/(^|\s|-|')([a-zà-ú])/g, function (m, sep, ch) { return sep + ch.toUpperCase(); });
+      }
+      function ticketCode(name) {
+        var s = name.trim().toUpperCase().replace(/\s+/g, ' ');
+        var h = 2166136261;
+        for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = (h * 16777619) >>> 0; }
+        var base = ('000000' + h.toString(36).toUpperCase()).slice(-6);
+        return 'RENOV-' + base.slice(0, 3) + '-' + base.slice(3, 6);
+      }
+      function renderBars(code) {
+        bars.innerHTML = '';
+        var seed = 0; for (var i = 0; i < code.length; i++) seed += code.charCodeAt(i) * (i + 1);
+        for (var j = 0; j < 34; j++) {
+          var bar = document.createElement('i');
+          seed = (seed * 1103515245 + 12345) & 0x7fffffff;
+          bar.style.width = ((seed % 3) + 1) + 'px';
+          bar.style.opacity = (seed % 2) ? '1' : '0.5';
+          bars.appendChild(bar);
+        }
+      }
+      function generate(rawName) {
+        var name = titleCase(rawName.trim().replace(/\s+/g, ' '));
+        var code = ticketCode(name);
+        elName.textContent = name;
+        elCode.textContent = code;
+        elCodeIn.textContent = code;
+        elIssued.textContent = new Date().toLocaleDateString('pt-BR');
+        renderBars(code);
+        var msg = 'Olá! Segue meu bilhete do Renovamente (23/10/2026).%0APortador: ' +
+                  encodeURIComponent(name) + '%0ACódigo: ' + code + '%0AJá realizei o pagamento via PIX.';
+        btnWa.href = 'https://wa.me/556493256081?text=' + msg;
+        area.classList.add('show');
+        area.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var v = input.value.trim();
+        if (v.length < 3 || v.indexOf(' ') === -1) { error.classList.add('show'); input.focus(); return; }
+        error.classList.remove('show');
+        generate(v);
+      });
+      input.addEventListener('input', function () { error.classList.remove('show'); });
+
+      document.getElementById('btnPrint').addEventListener('click', function () { window.print(); });
+      document.getElementById('btnNew').addEventListener('click', function () {
+        area.classList.remove('show'); input.value = ''; input.focus();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+
+      /* Pré-preenchimento via ?nome=Fulano (link enviado pela organização) */
+      var params = new URLSearchParams(window.location.search);
+      var pre = params.get('nome');
+      if (pre && pre.trim().length >= 3) { input.value = pre.trim(); generate(pre); }
+    })();
+  </script>
+</body>
+</html>

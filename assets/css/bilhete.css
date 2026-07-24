@@ -1,0 +1,95 @@
+/* =========================================================
+   Renovamente — Bilhete virtual (gerador + impressão)
+   Reutiliza tokens de styles.css
+   ========================================================= */
+
+.bilhete-page { padding-top: clamp(7rem, 12vh, 8.5rem); min-height: 100vh; }
+
+/* ---------- Formulário ---------- */
+.gen-wrap { max-width: 680px; margin: 0 auto; }
+.gen-form { background: var(--white); border: 1px solid rgba(127, 148, 99, 0.18); border-radius: var(--radius); padding: clamp(1.6rem, 4vw, 2.2rem); box-shadow: var(--shadow-sm); margin-bottom: 2.2rem; }
+.gen-form label { display: block; font-weight: 700; color: var(--green-800); margin-bottom: 0.5rem; font-size: 0.95rem; }
+.gen-form .field { display: flex; gap: 0.7rem; flex-wrap: wrap; }
+.gen-form input { flex: 1; min-width: 220px; font-family: var(--font-body); font-size: 1.05rem; padding: 0.9rem 1.1rem; border: 1.5px solid rgba(127, 148, 99, 0.3); border-radius: 12px; color: var(--green-800); background: var(--oat); }
+.gen-form input:focus-visible { outline: 3px solid var(--moss-600); outline-offset: 2px; border-color: var(--moss-600); }
+.gen-hint { font-size: 0.85rem; color: var(--ink-soft); margin-top: 0.8rem; }
+.gen-error { color: #b4463f; font-size: 0.9rem; margin-top: 0.6rem; font-weight: 600; display: none; }
+.gen-error.show { display: block; }
+
+/* ---------- Bilhete ---------- */
+.vticket-area { display: none; }
+.vticket-area.show { display: block; animation: fadeUp 0.5s var(--ease); }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+
+.vticket {
+  display: flex; background: var(--white); border-radius: 22px; overflow: hidden;
+  box-shadow: var(--shadow); border: 1px solid rgba(127, 148, 99, 0.2);
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+.vticket-main { flex: 1; padding: clamp(1.6rem, 4vw, 2.2rem); position: relative; }
+.vt-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 1.4rem; }
+.vt-brand .brand-mark { width: 38px; height: 38px; font-size: 1.05rem; }
+.vt-brand b { font-family: var(--font-display); font-size: 1.15rem; color: var(--green-800); }
+.vt-brand small { display: block; font-size: 0.64rem; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; color: var(--sage-500); }
+
+.vt-title { font-family: var(--font-display); font-size: clamp(1.8rem, 1.3rem + 2vw, 2.6rem); font-weight: 600; color: var(--green-800); line-height: 1.05; }
+.vt-sub { font-family: var(--font-display); font-style: italic; color: var(--moss-600); margin-bottom: 1.3rem; }
+
+.vt-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem 1.2rem; margin-bottom: 1.4rem; }
+.vt-meta div { display: flex; align-items: center; gap: 10px; }
+.vt-meta i { color: var(--moss-600); width: 18px; text-align: center; }
+.vt-meta span { font-size: 0.92rem; color: var(--ink-soft); }
+.vt-meta b { color: var(--green-800); display: block; font-size: 0.95rem; }
+
+.vt-holder { background: var(--sage-100); border-radius: 14px; padding: 1rem 1.2rem; }
+.vt-holder label { display: block; font-size: 0.66rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--moss-600); margin-bottom: 0.2rem; }
+.vt-holder strong { font-family: var(--font-display); font-size: clamp(1.3rem, 1rem + 1.5vw, 1.8rem); font-weight: 600; color: var(--green-800); line-height: 1.15; word-break: break-word; }
+
+/* Stub */
+.vticket-stub {
+  width: 168px; flex: 0 0 auto; color: var(--cream); text-align: center;
+  background: linear-gradient(160deg, var(--green-800), var(--moss-700));
+  padding: 1.6rem 1rem; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem;
+  position: relative; border-left: 2px dashed rgba(250, 248, 240, 0.5);
+}
+.vticket-stub::before, .vticket-stub::after {
+  content: ''; position: absolute; left: -11px; width: 20px; height: 20px; border-radius: 50%;
+  background: var(--oat); /* cor do fundo da seção, simula perfuração */
+}
+.vticket-stub::before { top: -10px; }
+.vticket-stub::after { bottom: -10px; }
+.vticket-stub .st-label { font-size: 0.66rem; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; color: var(--wheat-soft); }
+.vticket-stub .st-price { font-family: var(--font-display); font-size: 2rem; font-weight: 600; color: var(--white); line-height: 1; }
+.vticket-stub .st-code { font-family: 'Courier New', monospace; font-weight: 700; font-size: 0.98rem; letter-spacing: 1px; color: var(--white); background: rgba(250, 248, 240, 0.14); padding: 0.4rem 0.6rem; border-radius: 8px; margin-top: 0.3rem; }
+.vticket-stub .st-bars { display: flex; gap: 2px; height: 34px; align-items: stretch; margin-top: 0.6rem; }
+.vticket-stub .st-bars i { width: 2px; background: var(--cream); display: block; }
+
+.vt-foot { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-top: 1.3rem; flex-wrap: wrap; }
+.vt-code-inline { font-family: 'Courier New', monospace; font-weight: 700; color: var(--green-800); letter-spacing: 1px; }
+.vt-issued { font-size: 0.8rem; color: var(--ink-soft); }
+.vt-note { font-size: 0.82rem; color: var(--ink-soft); margin-top: 1.3rem; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.vt-note i { color: var(--moss-600); }
+
+/* Ações */
+.vt-actions { display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap; margin-top: 1.8rem; }
+
+/* ---------- Impressão ---------- */
+@media print {
+  .site-header, .gen-form, .vt-actions, .wa-float, .site-footer, .bilhete-head, .gen-hint { display: none !important; }
+  body { background: #fff !important; }
+  .bilhete-page { padding-top: 0 !important; }
+  section { padding: 0 !important; }
+  .vticket-area { display: block !important; }
+  .vticket { box-shadow: none; border: 1.5px solid #cbd2bb; page-break-inside: avoid; }
+  .vticket-stub::before, .vticket-stub::after { background: #fff; }
+  .vt-note { margin-top: 1rem; }
+}
+
+@media (max-width: 620px) {
+  .vticket { flex-direction: column; }
+  .vticket-stub { width: 100%; border-left: none; border-top: 2px dashed rgba(250, 248, 240, 0.5); flex-direction: row; justify-content: space-around; padding: 1.2rem; }
+  .vticket-stub::before { top: 50%; left: -10px; transform: translateY(-50%); }
+  .vticket-stub::after { bottom: 50%; left: auto; right: -10px; top: 50%; transform: translateY(-50%); }
+  .vticket-stub .st-bars { display: none; }
+  .vt-meta { grid-template-columns: 1fr; }
+}
