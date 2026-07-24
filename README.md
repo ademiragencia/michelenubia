@@ -31,17 +31,30 @@ Psicanálise Contemporânea. Atendimento online para todo o Brasil.
     └── img/favicon.svg   # Favicon (monograma)
 ```
 
-## 🚀 Publicação (GitHub Pages)
+## 🚀 Publicação (GitHub Pages + domínio próprio)
 
-1. Vá em **Settings → Pages**.
-2. Em **Source**, selecione **Deploy from a branch**.
-3. Escolha a branch (`main`) e a pasta `/ (root)` e salve.
-4. O site ficará disponível em `https://ademiragencia.github.io/michelenubia/`.
+O site é servido pelo GitHub Pages no domínio **michelenubiapsi.com.br**
+(o arquivo `CNAME` na raiz já configura isso).
 
-> **Domínio próprio:** ao configurar um domínio personalizado, atualize as URLs
-> (`canonical`, Open Graph, `sitemap.xml`, `robots.txt`, `site.webmanifest`) para
-> o novo endereço e adicione um arquivo `CNAME`.
+**1. Ativar o Pages**
+- Em **Settings → Pages → Source**, selecione **Deploy from a branch**.
+- Escolha a branch `main` e a pasta `/ (root)` e salve.
+- Em **Custom domain**, confirme `michelenubiapsi.com.br` e marque
+  **Enforce HTTPS**.
+
+**2. Configurar o DNS** (no painel onde o domínio foi registrado)
+- Registros **A** do apex `michelenubiapsi.com.br` apontando para os IPs do
+  GitHub Pages:
+  `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`
+- Registro **CNAME** de `www` apontando para `ademiragencia.github.io`.
+- A propagação e a emissão do certificado HTTPS podem levar de alguns
+  minutos a algumas horas.
+
+**Endereços finais**
+- Site: `https://michelenubiapsi.com.br/`
+- Evento: `https://michelenubiapsi.com.br/renovamente/`
 
 ## 📇 Contato
 
 - **WhatsApp:** [+55 64 9325-6081](https://wa.me/556493256081)
+- **Instagram:** [@michelenubiapsi](https://instagram.com/michelenubiapsi)

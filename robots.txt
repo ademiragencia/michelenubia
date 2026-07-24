@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://ademiragencia.github.io/michelenubia/sitemap.xml
+Sitemap: https://michelenubiapsi.com.br/sitemap.xml
