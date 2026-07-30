@@ -61,7 +61,7 @@
                 </div>
                 <p class="buy-error" id="buyError">Confira os dados e tente novamente.</p>
                 <button type="submit" class="btn btn-wa btn-block btn-lg" id="btnPay" style="margin-top:0.6rem">
-                  <i class="fas fa-qrcode"></i> Gerar PIX e pagar R$ 80
+                  <i class="fas fa-qrcode"></i> Gerar PIX e pagar R$ 82
                 </button>
                 <p class="buy-hint"><i class="fas fa-lock"></i> Pagamento processado com segurança pelo Asaas. Seus dados são usados apenas para emitir o ingresso.</p>
               </form>
@@ -72,8 +72,8 @@
               <p class="sub">Uma Imersão Terapêutica</p>
               <div class="order-line"><span><i class="fas fa-calendar-day"></i> Data</span><span>23/10/2026 · 19h</span></div>
               <div class="order-line"><span><i class="fas fa-location-dot"></i> Local</span><span>Jataí — GO</span></div>
-              <div class="order-line"><span><i class="fas fa-ticket"></i> Ingresso individual</span><span>R$ 80,00</span></div>
-              <div class="order-total"><span>Total</span><b>R$ 80</b></div>
+              <div class="order-line"><span><i class="fas fa-ticket"></i> Ingresso individual</span><span>R$ 82,00</span></div>
+              <div class="order-total"><span>Total</span><b>R$ 82</b></div>
               <ul class="order-perks">
                 <li><i class="fas fa-bolt"></i> Confirmação automática do PIX</li>
                 <li><i class="fas fa-print"></i> Bilhete na hora, para imprimir</li>
@@ -98,7 +98,7 @@
                 <i class="fas fa-spinner fa-spin"></i> Aguardando confirmação do pagamento…
               </div>
               <p class="buy-hint" style="justify-content:center"><i class="fas fa-circle-info"></i> Assim que o pagamento cair, o seu bilhete aparece aqui automaticamente. Pode deixar esta página aberta.</p>
-              <p style="text-align:center;margin-top:0.6rem;font-size:0.82rem;color:var(--ink-soft)">Valor: <strong>R$ 80,00</strong> · Ingresso Renovamente</p>
+              <p style="text-align:center;margin-top:0.6rem;font-size:0.82rem;color:var(--ink-soft)">Valor: <strong>R$ 82,00</strong> · Ingresso Renovamente</p>
             </div>
           </div>
         </div>
@@ -115,7 +115,7 @@
                   <div><i class="fas fa-calendar-day"></i><span><b>23 de outubro de 2026</b>sexta-feira</span></div>
                   <div><i class="fas fa-clock"></i><span><b>19h</b>Abertura da noite</span></div>
                   <div><i class="fas fa-location-dot"></i><span><b>Jataí — GO</b>Centro de Cultura Dom Benedito</span></div>
-                  <div><i class="fas fa-ticket"></i><span><b>Ingresso Individual</b>R$ 80,00</span></div>
+                  <div><i class="fas fa-ticket"></i><span><b>Ingresso Individual</b>R$ 82,00</span></div>
                 </div>
                 <div class="vt-holder"><label>Portador(a)</label><strong id="vtName">—</strong></div>
                 <div class="vt-foot">
@@ -125,7 +125,7 @@
               </div>
               <div class="vticket-stub">
                 <span class="st-label">Entrada</span>
-                <span class="st-price">R$ 80</span>
+                <span class="st-price">R$ 82</span>
                 <span class="st-code" id="vtCode">—</span>
                 <span class="st-bars" id="vtBars" aria-hidden="true"></span>
               </div>
@@ -248,7 +248,7 @@
             else if (data.error === 'asaas_pix') m = 'Não foi possível gerar o PIX agora. Tente novamente em instantes ou fale com a organização pelo WhatsApp.';
             else if (data.error === 'asaas_customer' || data.error === 'asaas_payment') m = 'Não foi possível iniciar o pagamento. Verifique os dados (CPF) e tente de novo.';
             showErr(m);
-            btnPay.disabled = false; btnPay.innerHTML = '<i class="fas fa-qrcode"></i> Gerar PIX e pagar R$ 80';
+            btnPay.disabled = false; btnPay.innerHTML = '<i class="fas fa-qrcode"></i> Gerar PIX e pagar R$ 82';
             return;
           }
           if (data.pixImage) qrImg.src = 'data:image/png;base64,' + data.pixImage;
@@ -258,7 +258,7 @@
           startPolling(data.orderId);
         } catch (e2) {
           showErr('Erro de conexão. Verifique a internet e tente novamente.');
-          btnPay.disabled = false; btnPay.innerHTML = '<i class="fas fa-qrcode"></i> Gerar PIX e pagar R$ 80';
+          btnPay.disabled = false; btnPay.innerHTML = '<i class="fas fa-qrcode"></i> Gerar PIX e pagar R$ 82';
         }
       });
 
