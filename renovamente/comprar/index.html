@@ -269,6 +269,19 @@
         });
       });
       document.getElementById('btnPrint').addEventListener('click', function () { window.print(); });
+
+      // 2ª via: abrir o bilhete de um pedido pago via ?order=<id>
+      var reOrder = new URLSearchParams(window.location.search).get('order');
+      if (reOrder) {
+        step1.classList.remove('show');
+        var h3 = step2.querySelector('h3'); if (h3) h3.textContent = 'Seu bilhete';
+        var pdesc = step2.querySelector('.qr-wrap > p'); if (pdesc) pdesc.style.display = 'none';
+        if (qrImg) qrImg.style.display = 'none';
+        var pc = step2.querySelector('.pix-copia'); if (pc) pc.style.display = 'none';
+        payStatus.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Carregando seu bilhete…';
+        step2.classList.add('show');
+        startPolling(reOrder);
+      }
     })();
   </script>
 </body>
