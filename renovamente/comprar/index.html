@@ -245,6 +245,7 @@
             if (data.error === 'gateway') m = 'Pagamento ainda não está ativo. Fale com a organização pelo WhatsApp.';
             else if (data.error === 'cpf') m = 'CPF inválido.';
             else if (data.error === 'email') m = 'E-mail inválido.';
+            else if (data.error === 'asaas_pix') m = 'Não foi possível gerar o PIX agora. Tente novamente em instantes ou fale com a organização pelo WhatsApp.';
             else if (data.error === 'asaas_customer' || data.error === 'asaas_payment') m = 'Não foi possível iniciar o pagamento. Verifique os dados (CPF) e tente de novo.';
             showErr(m);
             btnPay.disabled = false; btnPay.innerHTML = '<i class="fas fa-qrcode"></i> Gerar PIX e pagar R$ 80';
