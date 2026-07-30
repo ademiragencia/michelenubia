@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Comprar ingresso — Renovamente | Imersão Terapêutica</title>
+  <meta name="description" content="Compre seu ingresso do Renovamente com PIX. Confirmação automática e bilhete na hora. 23 de outubro de 2026, 19h, Jataí-GO.">
+  <meta name="robots" content="noindex, follow">
+  <meta name="theme-color" content="#2c3626">
+  <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <link rel="stylesheet" href="/assets/css/bilhete.css">
+</head>
+<body>
+  <header class="site-header ev-header">
+    <div class="container nav">
+      <a href="/renovamente/" class="brand" aria-label="Voltar para a página do evento">
+        <span class="brand-mark">M</span>
+        <span>Michele Núbia<span class="dot">.</span><small>Renovamente</small></span>
+      </a>
+      <a href="/renovamente/" class="btn btn-outline"><i class="fas fa-arrow-left"></i> Voltar</a>
+    </div>
+  </header>
+
+  <main class="bilhete-page">
+    <section>
+      <div class="container gen-wrap" style="max-width:960px">
+        <div class="section-head bilhete-head" style="margin-bottom:2rem">
+          <span class="eyebrow">Ingresso online</span>
+          <h2>Garanta o seu ingresso</h2>
+          <p>Pague com PIX e o seu bilhete é <strong>gerado automaticamente</strong> assim que o pagamento for confirmado.</p>
+        </div>
+
+        <!-- ETAPA 1: DADOS -->
+        <div class="pay-step show" id="step1">
+          <div class="checkout-grid">
+            <div class="buy-card">
+              <h3>Seus dados</h3>
+              <form id="buyForm" novalidate>
+                <div class="buy-field">
+                  <label for="bname">Nome completo</label>
+                  <input type="text" id="bname" autocomplete="name" placeholder="Ex.: Maria da Silva" required>
+                </div>
+                <div class="buy-field">
+                  <label for="bemail">E-mail</label>
+                  <input type="email" id="bemail" autocomplete="email" placeholder="seu@email.com" required>
+                </div>
+                <div class="buy-row2">
+                  <div class="buy-field">
+                    <label for="bcpf">CPF</label>
+                    <input type="text" id="bcpf" inputmode="numeric" autocomplete="off" placeholder="000.000.000-00" required>
+                  </div>
+                  <div class="buy-field">
+                    <label for="bphone">WhatsApp</label>
+                    <input type="text" id="bphone" inputmode="numeric" autocomplete="tel" placeholder="(64) 99999-9999">
+                  </div>
+                </div>
+                <p class="buy-error" id="buyError">Confira os dados e tente novamente.</p>
+                <button type="submit" class="btn btn-wa btn-block btn-lg" id="btnPay" style="margin-top:0.6rem">
+                  <i class="fas fa-qrcode"></i> Gerar PIX e pagar R$ 80
+                </button>
+                <p class="buy-hint"><i class="fas fa-lock"></i> Pagamento processado com segurança pelo Asaas. Seus dados são usados apenas para emitir o ingresso.</p>
+              </form>
+            </div>
+
+            <aside class="order-summary">
+              <h4>Renovamente</h4>
+              <p class="sub">Uma Imersão Terapêutica</p>
+              <div class="order-line"><span><i class="fas fa-calendar-day"></i> Data</span><span>23/10/2026 · 19h</span></div>
+              <div class="order-line"><span><i class="fas fa-location-dot"></i> Local</span><span>Jataí — GO</span></div>
+              <div class="order-line"><span><i class="fas fa-ticket"></i> Ingresso individual</span><span>R$ 80,00</span></div>
+              <div class="order-total"><span>Total</span><b>R$ 80</b></div>
+              <ul class="order-perks">
+                <li><i class="fas fa-bolt"></i> Confirmação automática do PIX</li>
+                <li><i class="fas fa-print"></i> Bilhete na hora, para imprimir</li>
+                <li><i class="fas fa-shield-halved"></i> Ambiente seguro</li>
+              </ul>
+            </aside>
+          </div>
+        </div>
+
+        <!-- ETAPA 2: PAGAMENTO PIX -->
+        <div class="pay-step" id="step2">
+          <div class="buy-card" style="max-width:560px;margin:0 auto">
+            <div class="qr-wrap">
+              <h3 style="text-align:center">Pague com PIX para confirmar</h3>
+              <p style="text-align:center;margin-bottom:1.2rem">Abra o app do seu banco, escaneie o QR Code ou use o PIX copia e cola.</p>
+              <img id="qrImg" class="qr-img" alt="QR Code PIX" width="230" height="230">
+              <div class="pix-copia">
+                <input type="text" id="pixPayload" readonly>
+                <button type="button" class="pix-copy" id="copyPix"><i class="fas fa-copy"></i> Copiar</button>
+              </div>
+              <div class="pay-status" id="payStatus">
+                <i class="fas fa-spinner fa-spin"></i> Aguardando confirmação do pagamento…
+              </div>
+              <p class="buy-hint" style="justify-content:center"><i class="fas fa-circle-info"></i> Assim que o pagamento cair, o seu bilhete aparece aqui automaticamente. Pode deixar esta página aberta.</p>
+              <p style="text-align:center;margin-top:0.6rem;font-size:0.82rem;color:var(--ink-soft)">Valor: <strong>R$ 80,00</strong> · Ingresso Renovamente</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ETAPA 3: BILHETE -->
+        <div class="pay-step" id="step3">
+          <div class="vticket-area show">
+            <div class="vticket">
+              <div class="vticket-main">
+                <div class="vt-brand"><span class="brand-mark">M</span><div><b>Michele Núbia</b><small>Renovamente</small></div></div>
+                <div class="vt-title">Renovamente</div>
+                <div class="vt-sub">Uma Imersão Terapêutica</div>
+                <div class="vt-meta">
+                  <div><i class="fas fa-calendar-day"></i><span><b>23 de outubro de 2026</b>sexta-feira</span></div>
+                  <div><i class="fas fa-clock"></i><span><b>19h</b>Abertura da noite</span></div>
+                  <div><i class="fas fa-location-dot"></i><span><b>Jataí — GO</b>Centro de Cultura Dom Benedito</span></div>
+                  <div><i class="fas fa-ticket"></i><span><b>Ingresso Individual</b>R$ 80,00</span></div>
+                </div>
+                <div class="vt-holder"><label>Portador(a)</label><strong id="vtName">—</strong></div>
+                <div class="vt-foot">
+                  <span class="vt-code-inline">Código: <span id="vtCodeInline">—</span></span>
+                  <span class="vt-issued">Pago em <span id="vtIssued">—</span></span>
+                </div>
+              </div>
+              <div class="vticket-stub">
+                <span class="st-label">Entrada</span>
+                <span class="st-price">R$ 80</span>
+                <span class="st-code" id="vtCode">—</span>
+                <span class="st-bars" id="vtBars" aria-hidden="true"></span>
+              </div>
+            </div>
+            <p class="vt-note"><i class="fas fa-circle-check"></i> Pagamento confirmado! Este é o seu bilhete — apresente-o (impresso ou na tela) na entrada.</p>
+            <div class="vt-actions">
+              <button type="button" class="btn btn-moss" id="btnPrint"><i class="fas fa-print"></i> Imprimir / Salvar PDF</button>
+              <a class="btn btn-wa" id="btnWa" href="#" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i> Enviar meu bilhete</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom" style="border:none;padding-top:0">
+        <p>Renovamente — Uma Imersão Terapêutica · 23 de outubro de 2026 · Jataí-GO</p>
+        <p style="margin-top:0.6rem">© <span id="year">2026</span> Michele Núbia · <a href="/renovamente/" style="color:var(--wheat)">Página do evento</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/assets/js/renov-config.js"></script>
+  <script>
+    (function () {
+      var yearEl = document.getElementById('year');
+      if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+      var form = document.getElementById('buyForm');
+      var bname = document.getElementById('bname'), bemail = document.getElementById('bemail'),
+          bcpf = document.getElementById('bcpf'), bphone = document.getElementById('bphone');
+      var err = document.getElementById('buyError'), btnPay = document.getElementById('btnPay');
+      var step1 = document.getElementById('step1'), step2 = document.getElementById('step2'), step3 = document.getElementById('step3');
+      var qrImg = document.getElementById('qrImg'), pixPayload = document.getElementById('pixPayload'),
+          payStatus = document.getElementById('payStatus');
+      var poll = null, currentOrder = null;
+
+      function digits(s) { return (s || '').replace(/\D/g, ''); }
+      function titleCase(s) { return s.toLowerCase().replace(/(^|\s|-|')([a-zà-ú])/g, function (m, a, b) { return a + b.toUpperCase(); }); }
+      function showErr(m) { err.textContent = m; err.classList.add('show'); }
+      function fn(name) { return window.RENOV.url + '/functions/v1/' + name; }
+      function headers() { return { 'apikey': window.RENOV.key, 'Authorization': 'Bearer ' + window.RENOV.key, 'Content-Type': 'application/json' }; }
+
+      // Máscaras simples
+      bcpf.addEventListener('input', function () {
+        var v = digits(bcpf.value).slice(0, 11);
+        v = v.replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+        bcpf.value = v;
+      });
+      bphone.addEventListener('input', function () {
+        var v = digits(bphone.value).slice(0, 11);
+        if (v.length > 6) v = v.replace(/(\d{2})(\d{5})(\d{0,4}).*/, '($1) $2-$3');
+        else if (v.length > 2) v = v.replace(/(\d{2})(\d{0,5})/, '($1) $2');
+        bphone.value = v;
+      });
+
+      function renderBars(code) {
+        var bars = document.getElementById('vtBars'); bars.innerHTML = '';
+        var seed = 0; for (var i = 0; i < code.length; i++) seed += code.charCodeAt(i) * (i + 1);
+        for (var j = 0; j < 34; j++) { var b = document.createElement('i'); seed = (seed * 1103515245 + 12345) & 0x7fffffff; b.style.width = ((seed % 3) + 1) + 'px'; b.style.opacity = (seed % 2) ? '1' : '0.5'; bars.appendChild(b); }
+      }
+      function showTicket(name, code) {
+        var nm = titleCase(name.trim());
+        document.getElementById('vtName').textContent = nm;
+        document.getElementById('vtCode').textContent = code;
+        document.getElementById('vtCodeInline').textContent = code;
+        document.getElementById('vtIssued').textContent = new Date().toLocaleDateString('pt-BR');
+        renderBars(code);
+        var msg = 'Ol%C3%A1! Comprei meu ingresso do Renovamente (23/10/2026).%0APortador: ' + encodeURIComponent(nm) + '%0AC%C3%B3digo: ' + code;
+        document.getElementById('btnWa').href = 'https://wa.me/556493256081?text=' + msg;
+        step1.classList.remove('show'); step2.classList.remove('show'); step3.classList.add('show');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      function startPolling(orderId) {
+        currentOrder = orderId;
+        if (poll) clearInterval(poll);
+        poll = setInterval(checkStatus, 4000);
+        checkStatus();
+      }
+      async function checkStatus() {
+        if (!currentOrder) return;
+        try {
+          var r = await fetch(window.RENOV.url + '/rest/v1/rpc/renov_order_status', {
+            method: 'POST', headers: headers(), body: JSON.stringify({ p_order: currentOrder })
+          });
+          var d = await r.json();
+          if (d && d.ok && d.status === 'paid' && d.code) {
+            clearInterval(poll); poll = null;
+            payStatus.classList.add('paid');
+            payStatus.innerHTML = '<i class="fas fa-circle-check"></i> Pagamento confirmado!';
+            setTimeout(function () { showTicket(d.name, d.code); }, 800);
+          }
+        } catch (e) { /* silencioso; tenta de novo */ }
+      }
+
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        err.classList.remove('show');
+        var name = bname.value.trim().replace(/\s+/g, ' ');
+        var email = bemail.value.trim();
+        var cpf = digits(bcpf.value), phone = digits(bphone.value);
+        if (name.length < 3 || name.indexOf(' ') === -1) return showErr('Digite o seu nome completo.');
+        if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return showErr('Digite um e-mail válido.');
+        if (cpf.length !== 11) return showErr('Digite um CPF válido (11 dígitos).');
+        if (!window.RENOV || window.RENOV.url.indexOf('__') === 0) return showErr('Sistema indisponível. Fale com a organização pelo WhatsApp.');
+
+        btnPay.disabled = true; btnPay.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando PIX…';
+        try {
+          var resp = await fetch(fn('renov-checkout'), { method: 'POST', headers: headers(), body: JSON.stringify({ name: name, email: email, cpf: cpf, phone: phone }) });
+          var data = await resp.json();
+          if (!resp.ok || !data.ok) {
+            var m = 'Não foi possível gerar o PIX. Tente novamente.';
+            if (data.error === 'gateway') m = 'Pagamento ainda não está ativo. Fale com a organização pelo WhatsApp.';
+            else if (data.error === 'cpf') m = 'CPF inválido.';
+            else if (data.error === 'email') m = 'E-mail inválido.';
+            else if (data.error === 'asaas_customer' || data.error === 'asaas_payment') m = 'Não foi possível iniciar o pagamento. Verifique os dados (CPF) e tente de novo.';
+            showErr(m);
+            btnPay.disabled = false; btnPay.innerHTML = '<i class="fas fa-qrcode"></i> Gerar PIX e pagar R$ 80';
+            return;
+          }
+          if (data.pixImage) qrImg.src = 'data:image/png;base64,' + data.pixImage;
+          pixPayload.value = data.pixPayload || '';
+          step1.classList.remove('show'); step2.classList.add('show');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          startPolling(data.orderId);
+        } catch (e2) {
+          showErr('Erro de conexão. Verifique a internet e tente novamente.');
+          btnPay.disabled = false; btnPay.innerHTML = '<i class="fas fa-qrcode"></i> Gerar PIX e pagar R$ 80';
+        }
+      });
+
+      document.getElementById('copyPix').addEventListener('click', function () {
+        var btn = this;
+        navigator.clipboard.writeText(pixPayload.value).then(function () {
+          btn.innerHTML = '<i class="fas fa-check"></i> Copiado'; setTimeout(function () { btn.innerHTML = '<i class="fas fa-copy"></i> Copiar'; }, 2000);
+        });
+      });
+      document.getElementById('btnPrint').addEventListener('click', function () { window.print(); });
+    })();
+  </script>
+</body>
+</html>
