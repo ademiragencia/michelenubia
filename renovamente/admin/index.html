@@ -43,6 +43,22 @@
 
         <!-- Painel -->
         <div id="panel" style="display:none">
+
+          <!-- Rastreamento de acessos -->
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:0.6rem;flex-wrap:wrap;margin-bottom:1rem">
+            <h3 style="font-size:1.3rem;margin:0"><i class="fas fa-chart-line" style="color:var(--moss-600)"></i> Acessos e rastreamento</h3>
+            <button type="button" class="btn btn-outline" id="btnReloadTraf" style="padding:0.5rem 1rem;font-size:0.85rem"><i class="fas fa-rotate"></i> Atualizar</button>
+          </div>
+          <div class="admin-stats" id="trafStats" style="margin-bottom:1.2rem"></div>
+          <div class="admin-table-wrap" style="margin-bottom:1.8rem">
+            <table class="admin-table" id="visitsTable">
+              <thead><tr><th>Quando</th><th>IP</th><th>Local</th><th>Dispositivo</th><th>Página</th><th>Evento</th></tr></thead>
+              <tbody id="visitsBody"></tbody>
+            </table>
+            <p id="visitsEmpty" class="gen-hint" style="display:none;padding:0 0.9rem 0.9rem">Nenhum acesso registrado ainda.</p>
+          </div>
+
+          <h3 style="font-size:1.3rem;margin:0 0 0.8rem"><i class="fas fa-ticket" style="color:var(--moss-600)"></i> Códigos</h3>
           <div class="admin-stats" id="stats"></div>
 
           <!-- Vendas online -->
@@ -138,6 +154,53 @@
         try { renderOrders(await rpc('renov_admin_list_orders', { p_key: KEY })); } catch (e) { /* */ }
       }
 
+      /* ---- Rastreamento ---- */
+      var trafStats = document.getElementById('trafStats');
+      var visitsBody = document.getElementById('visitsBody');
+      var visitsEmpty = document.getElementById('visitsEmpty');
+      function stat(n, l) { return '<div class="admin-stat"><b>' + (n || 0) + '</b><span>' + l + '</span></div>'; }
+      function pageLabel(p) {
+        if (!p) return '—';
+        if (/\/comprar\/?$/.test(p)) return 'Compra';
+        if (/\/bilhete\/?$/.test(p)) return 'Bilhete';
+        if (/\/admin\/?$/.test(p)) return 'Painel';
+        if (/\/renovamente\/?$/.test(p)) return 'Evento';
+        return p;
+      }
+      function eventLabel(e) {
+        return ({ view: 'Acesso', checkout_start: 'Iniciou compra', pix_generated: 'Gerou PIX', paid: 'Pagou' })[e] || e;
+      }
+      function renderTraf(s, visits) {
+        s = s || {};
+        trafStats.innerHTML =
+          stat(s.views, 'Acessos') + stat(s.unique_ips, 'Visitantes únicos') + stat(s.today, 'Acessos hoje') +
+          stat(s.checkout_start, 'Iniciaram compra') + stat(s.pix_generated, 'Geraram PIX') + stat(s.paid, 'Pagaram');
+        var rows = Array.isArray(visits) ? visits : [];
+        visitsBody.innerHTML = '';
+        visitsEmpty.style.display = rows.length ? 'none' : 'block';
+        rows.forEach(function (v) {
+          var when = v.at ? new Date(v.at).toLocaleString('pt-BR') : '—';
+          var local = [v.city, v.region, v.country].filter(Boolean).join(', ') || '—';
+          var dev = (v.device || '—') + (v.browser ? ' · ' + v.browser : '');
+          var evClass = v.event === 'paid' ? 'badge-ok' : (v.event === 'view' ? '' : 'badge-used');
+          var ev = evClass ? '<span class="' + evClass + '">' + eventLabel(v.event) + '</span>' : eventLabel(v.event);
+          visitsBody.insertAdjacentHTML('beforeend',
+            '<tr><td class="nowrap">' + when + '</td>' +
+            '<td class="mono">' + (esc(v.ip) || '—') + '</td>' +
+            '<td>' + esc(local) + '</td>' +
+            '<td class="nowrap">' + esc(dev) + '</td>' +
+            '<td>' + esc(pageLabel(v.path)) + '</td>' +
+            '<td>' + ev + '</td></tr>');
+        });
+      }
+      async function loadTraf() {
+        try {
+          var s = await rpc('renov_admin_visit_stats', { p_key: KEY });
+          var v = await rpc('renov_admin_list_visits', { p_key: KEY, p_limit: 150 });
+          renderTraf(s, v);
+        } catch (e) { /* */ }
+      }
+
       function render(rows) {
         var total = rows.length, used = rows.filter(function (r) { return r.status === 'used'; }).length;
         statsEl.innerHTML =
@@ -179,6 +242,7 @@
           loginBox.style.display = 'none';
           panel.style.display = 'block';
           loadOrders();
+          loadTraf();
         } catch (err) {
           loginError.textContent = 'Senha incorreta ou sem acesso.';
           loginError.classList.add('show');
@@ -188,6 +252,7 @@
 
       document.getElementById('btnReload').addEventListener('click', function () { load().catch(function(){}); });
       document.getElementById('btnReloadOrders').addEventListener('click', function () { loadOrders(); });
+      document.getElementById('btnReloadTraf').addEventListener('click', function () { loadTraf(); });
       ordersBody.addEventListener('click', function (e) {
         var b = e.target.closest('button'); if (!b) return;
         if (b.dataset['2via']) { navigator.clipboard.writeText(b.dataset['2via']); b.innerHTML = '<i class="fas fa-check"></i> Copiado'; }

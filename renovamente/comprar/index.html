@@ -152,6 +152,7 @@
   </footer>
 
   <script src="/assets/js/renov-config.js"></script>
+  <script src="/assets/js/renov-track.js" defer></script>
   <script>
     (function () {
       var yearEl = document.getElementById('year');
@@ -200,6 +201,7 @@
         var msg = 'Ol%C3%A1! Comprei meu ingresso do Renovamente (23/10/2026).%0APortador: ' + encodeURIComponent(nm) + '%0AC%C3%B3digo: ' + code;
         document.getElementById('btnWa').href = 'https://wa.me/556493256081?text=' + msg;
         step1.classList.remove('show'); step2.classList.remove('show'); step3.classList.add('show');
+        if (window.renovTrack) renovTrack('paid', { code: code });
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
 
@@ -236,6 +238,7 @@
         if (cpf.length !== 11) return showErr('Digite um CPF válido (11 dígitos).');
         if (!window.RENOV || window.RENOV.url.indexOf('__') === 0) return showErr('Sistema indisponível. Fale com a organização pelo WhatsApp.');
 
+        if (window.renovTrack) renovTrack('checkout_start');
         btnPay.disabled = true; btnPay.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando PIX…';
         try {
           var resp = await fetch(fn('renov-checkout'), { method: 'POST', headers: headers(), body: JSON.stringify({ name: name, email: email, cpf: cpf, phone: phone }) });
@@ -254,6 +257,7 @@
           if (data.pixImage) qrImg.src = 'data:image/png;base64,' + data.pixImage;
           pixPayload.value = data.pixPayload || '';
           step1.classList.remove('show'); step2.classList.add('show');
+          if (window.renovTrack) renovTrack('pix_generated', { order: data.orderId });
           window.scrollTo({ top: 0, behavior: 'smooth' });
           startPolling(data.orderId);
         } catch (e2) {
