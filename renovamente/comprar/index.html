@@ -168,6 +168,16 @@
       var poll = null, currentOrder = null;
 
       function digits(s) { return (s || '').replace(/\D/g, ''); }
+      function validCPF(c) {
+        c = digits(c);
+        if (c.length !== 11 || /^(\d)\1{10}$/.test(c)) return false;
+        var s = 0, r, i;
+        for (i = 0; i < 9; i++) s += parseInt(c[i], 10) * (10 - i);
+        r = (s * 10) % 11; if (r === 10) r = 0; if (r !== parseInt(c[9], 10)) return false;
+        s = 0; for (i = 0; i < 10; i++) s += parseInt(c[i], 10) * (11 - i);
+        r = (s * 10) % 11; if (r === 10) r = 0; if (r !== parseInt(c[10], 10)) return false;
+        return true;
+      }
       function titleCase(s) { return s.toLowerCase().replace(/(^|\s|-|')([a-zà-ú])/g, function (m, a, b) { return a + b.toUpperCase(); }); }
       function showErr(m) { err.textContent = m; err.classList.add('show'); }
       function fn(name) { return window.RENOV.url + '/functions/v1/' + name; }
@@ -235,7 +245,7 @@
         var cpf = digits(bcpf.value), phone = digits(bphone.value);
         if (name.length < 3 || name.indexOf(' ') === -1) return showErr('Digite o seu nome completo.');
         if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return showErr('Digite um e-mail válido.');
-        if (cpf.length !== 11) return showErr('Digite um CPF válido (11 dígitos).');
+        if (!validCPF(cpf)) return showErr('CPF inválido. Confira os números e digite novamente.');
         if (!window.RENOV || window.RENOV.url.indexOf('__') === 0) return showErr('Sistema indisponível. Fale com a organização pelo WhatsApp.');
 
         if (window.renovTrack) renovTrack('checkout_start');
@@ -249,7 +259,8 @@
             else if (data.error === 'cpf') m = 'CPF inválido.';
             else if (data.error === 'email') m = 'E-mail inválido.';
             else if (data.error === 'asaas_pix') m = 'Não foi possível gerar o PIX agora. Tente novamente em instantes ou fale com a organização pelo WhatsApp.';
-            else if (data.error === 'asaas_customer' || data.error === 'asaas_payment') m = 'Não foi possível iniciar o pagamento. Verifique os dados (CPF) e tente de novo.';
+            else if (data.error === 'asaas_customer') m = 'CPF inválido ou dados incorretos. Confira o CPF e tente novamente.';
+            else if (data.error === 'asaas_payment') m = 'Não foi possível iniciar o pagamento. Tente novamente em instantes.';
             showErr(m);
             btnPay.disabled = false; btnPay.innerHTML = '<i class="fas fa-qrcode"></i> Gerar PIX e pagar R$ 82';
             return;
