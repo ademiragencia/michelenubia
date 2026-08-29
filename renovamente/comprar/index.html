@@ -99,6 +99,14 @@
               </div>
               <p class="buy-hint" style="justify-content:center"><i class="fas fa-circle-info"></i> Assim que o pagamento cair, o seu bilhete aparece aqui automaticamente. Pode deixar esta página aberta.</p>
               <p style="text-align:center;margin-top:0.6rem;font-size:0.82rem;color:var(--ink-soft)">Valor: <strong>R$ 82,00</strong> · Ingresso Renovamente</p>
+              <div id="saveLinkBox" style="margin-top:1.1rem;background:var(--sage-100);border-radius:12px;padding:0.9rem 1rem;font-size:0.86rem;color:var(--green-800);display:none">
+                <b>🔖 Guarde o link do seu ingresso</b>
+                <div style="color:var(--ink-soft);margin:0.2rem 0 0.5rem">Se fechar a página, acesse por aqui após o pagamento:</div>
+                <div style="display:flex;gap:0.5rem">
+                  <input id="saveLink" type="text" readonly style="flex:1;font-family:'Courier New',monospace;font-size:0.78rem;padding:0.6rem;border:1px solid rgba(127,148,99,.3);border-radius:8px;background:#fff;color:var(--green-800)">
+                  <button type="button" class="pix-copy" id="copyLink" style="padding:0.6rem 0.8rem"><i class="fas fa-copy"></i></button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -268,6 +276,11 @@
           if (data.pixImage) qrImg.src = 'data:image/png;base64,' + data.pixImage;
           pixPayload.value = data.pixPayload || '';
           step1.classList.remove('show'); step2.classList.add('show');
+          try {
+            var slink = location.origin + location.pathname + '?order=' + data.orderId;
+            var slinkEl = document.getElementById('saveLink');
+            if (slinkEl) { slinkEl.value = slink; document.getElementById('saveLinkBox').style.display = 'block'; }
+          } catch (e) {}
           if (window.renovTrack) renovTrack('pix_generated', { order: data.orderId });
           window.scrollTo({ top: 0, behavior: 'smooth' });
           startPolling(data.orderId);
@@ -284,6 +297,14 @@
         });
       });
       document.getElementById('btnPrint').addEventListener('click', function () { window.print(); });
+      (function () {
+        var cl = document.getElementById('copyLink');
+        if (cl) cl.addEventListener('click', function () {
+          var el = document.getElementById('saveLink');
+          navigator.clipboard.writeText(el.value); cl.innerHTML = '<i class="fas fa-check"></i>';
+          setTimeout(function () { cl.innerHTML = '<i class="fas fa-copy"></i>'; }, 1800);
+        });
+      })();
 
       // 2ª via: abrir o bilhete de um pedido pago via ?order=<id>
       var reOrder = new URLSearchParams(window.location.search).get('order');
