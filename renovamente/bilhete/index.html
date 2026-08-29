@@ -32,10 +32,22 @@
     <section>
       <div class="container gen-wrap">
         <div class="section-head bilhete-head" style="margin-bottom:2rem">
-          <span class="eyebrow">Seu ingresso</span>
-          <h2>Gere o seu bilhete</h2>
-          <p>Informe o seu nome e o <strong>código de confirmação</strong> que você recebeu após o pagamento. O bilhete pode ser impresso ou salvo em PDF.</p>
+          <span class="eyebrow">Meu ingresso</span>
+          <h2>Acesse o seu bilhete</h2>
+          <p>Comprou pelo site? Digite o <strong>CPF usado na compra</strong> para acessar seu ingresso. O bilhete pode ser impresso ou salvo em PDF.</p>
         </div>
+
+        <form class="gen-form" id="cpfForm" novalidate>
+          <label for="cpfBusca">Buscar meu ingresso pelo CPF</label>
+          <div class="field">
+            <input type="text" id="cpfBusca" inputmode="numeric" placeholder="000.000.000-00" autocomplete="off" required>
+            <button type="submit" class="btn btn-moss" id="btnCpf"><i class="fas fa-magnifying-glass"></i> Buscar ingresso</button>
+          </div>
+          <p class="gen-error" id="cpfError">Nenhum ingresso encontrado para este CPF.</p>
+          <p class="gen-hint"><i class="fas fa-circle-info"></i> Use o mesmo CPF informado no pagamento. Se comprou mais de um, todos aparecem aqui.</p>
+        </form>
+
+        <div style="text-align:center;margin:0.4rem 0 1.6rem"><span style="color:var(--ink-soft);font-size:0.85rem">— ou tenho um código de acesso —</span></div>
 
         <form class="gen-form" id="genForm" novalidate>
           <label for="nome">Nome completo do portador(a)</label>
@@ -209,6 +221,47 @@
       });
       input.addEventListener('input', function () { error.classList.remove('show'); });
       codeInput.addEventListener('input', function () { error.classList.remove('show'); });
+
+      /* ---- Busca por CPF ---- */
+      var cpfForm = document.getElementById('cpfForm');
+      var cpfBusca = document.getElementById('cpfBusca');
+      var cpfError = document.getElementById('cpfError');
+      var btnCpf = document.getElementById('btnCpf');
+      cpfBusca.addEventListener('input', function () {
+        var v = cpfBusca.value.replace(/\D/g, '').slice(0, 11);
+        v = v.replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+        cpfBusca.value = v; cpfError.classList.remove('show');
+      });
+      cpfForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        cpfError.classList.remove('show');
+        var c = cpfBusca.value.replace(/\D/g, '');
+        if (c.length !== 11) { cpfError.textContent = 'Digite um CPF válido (11 dígitos).'; cpfError.classList.add('show'); return; }
+        if (!window.RENOV || window.RENOV.url.indexOf('__') === 0) { cpfError.textContent = 'Sistema indisponível. Tente novamente.'; cpfError.classList.add('show'); return; }
+        btnCpf.disabled = true; btnCpf.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Buscando...';
+        try {
+          var resp = await fetch(window.RENOV.url + '/rest/v1/rpc/renov_ticket_by_cpf', {
+            method: 'POST',
+            headers: { 'apikey': window.RENOV.key, 'Authorization': 'Bearer ' + window.RENOV.key, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ p_cpf: c })
+          });
+          var rows = await resp.json();
+          btnCpf.disabled = false; btnCpf.innerHTML = '<i class="fas fa-magnifying-glass"></i> Buscar ingresso';
+          if (!Array.isArray(rows) || rows.length === 0) {
+            cpfError.textContent = 'Nenhum ingresso pago encontrado para este CPF. Confira o número ou fale com a organização.';
+            cpfError.classList.add('show'); return;
+          }
+          area.classList.remove('show');
+          renderTicket(rows[0].name, rows[0].code, rows[0].paid_at, false);
+          if (rows.length > 1) {
+            var extras = rows.slice(1).map(function (r) { return r.code; }).join(', ');
+            elStatus.innerHTML = '<i class="fas fa-circle-check"></i> Você tem ' + rows.length + ' ingressos. Este é 1 deles. Outros códigos: ' + extras;
+          }
+        } catch (e2) {
+          btnCpf.disabled = false; btnCpf.innerHTML = '<i class="fas fa-magnifying-glass"></i> Buscar ingresso';
+          cpfError.textContent = 'Erro ao buscar. Verifique a conexão e tente novamente.'; cpfError.classList.add('show');
+        }
+      });
 
       document.getElementById('btnPrint').addEventListener('click', function () { window.print(); });
       document.getElementById('btnNew').addEventListener('click', function () {
